@@ -16,6 +16,10 @@ function openTab(evt, tabName) {
     evt.currentTarget.className += " active";
 }
 
-function openNewGameSettings() {
+function openModal(modalSelector) {
+    $('#' + modalSelector).css('display', 'block');
+}
 
+function closeModal(modalSelector) {
+    $('#' + modalSelector).css('display', 'none');
 }

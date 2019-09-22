@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>RCCC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -17,28 +19,59 @@
 <body>
 <div id="appHeader">
     <div id="appLogo">Reedy Creek Cricket Club</div>
+    <div id="appNav">
+        <button class="nav-item" onclick="openTab(event, 'home');">Home</button>
+        <button class="nav-item" onclick="openTab(event, 'liveMatches');">Live Matches</button>
+        <button class="nav-item" onclick="openTab(event, 'players');">Players</button>
+        <button class="nav-item" onclick="openTab(event, 'stats');">Stats</button>
+        <button class="nav-item" onclick="openTab(event, 'about');">About</button>
+    </div>
 </div>
 <div id="appContent">
-        <div id="appNav">
-            <button class="nav-item" onclick="openTab(event, 'home');">Home</button>
-            <button class="nav-item" onclick="openTab(event, 'liveMatches');">Live Matches</button>
-            <button class="nav-item" onclick="openTab(event, 'players');">Players</button>
-            <button class="nav-item" onclick="openTab(event, 'stats');">Stats</button>
-            <button class="nav-item" onclick="openTab(event, 'about');">About</button>
-        </div>
+    <div id="home" class="tabcontent">
+        <button class="custom-btn" onclick="openModal('gameSettings');">&#10010; New Game</button>
 
-        <div id="home" class="tabcontent">
-            <h3>New Match</h3>
-            <!-- <button onclick="openNewGameSettings();">Start New Game</button> -->
+        <div id="gameSettings" class="modal-container">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Game Settings</div>
+                    <button class="modal-close-btn" onclick="closeModal('gameSettings');">&#10006;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="overLimit">
+                        <label class="form-label">Over Limit</label><span class="required-field"> &#10033;</span><br>
+                        <input class="form-input" type="number" value="20"> overs per innings
+                    </div>
+                    <br>
+                    <div id="teams">
+                        <div id="teamA">
+                            <label class="form-label">First Team Name</label><span class="required-field"> &#10033;</span><br>
+                            <input class="form-input" type="text" value="Team A" placeholder="Enter Team Name"><br>
+                            <label class="form-label">Select Players</label><span class="required-field"> &#10033;</span><br>
+                        </div>
+                        <div id="teamB">
+                            <label class="form-label">Second Team Name</label><span class="required-field"> &#10033;</span><br>
+                            <input class="form-input" type="text" value="Team B" placeholder="Enter Team Name"><br>
+                            <label class="form-label">Select Players</label><span class="required-field"> &#10033;</span><br>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer"></div>
+            </div>
         </div>
-              
-        <div id="liveMatches" class="tabcontent">
-            <h3>Live Matches</h3>
-        </div>
-              
-        <div id="stats" class="tabcontent">
-            <h3>Stats</h3>
-        </div>
+    </div>
+            
+    <div id="liveMatches" class="tabcontent">
+        <h3>Live Matches</h3>
+    </div>
+
+    <div id="players" class="tabcontent">
+        <h3>Players</h3>
+    </div>
+            
+    <div id="stats" class="tabcontent">
+        <h3>Stats</h3>
+    </div>
 </div>
 </body>
 </html>
