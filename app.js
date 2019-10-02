@@ -26,7 +26,7 @@ function closeModal(modalSelector) {
 
 
 $.ajax({
-    url: "data.json",
+    url: "data.txt",
     method: "POST",
     data: JSON.stringify([
         {
