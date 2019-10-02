@@ -28,11 +28,11 @@ function closeModal(modalSelector) {
 $.ajax({
     url: "data.json",
     method: "POST",
-    data: [
+    data: JSON.stringify([
         {
             "id": 2
         }
-    ],
+    ]),
     success: function (data){
         console.log("Saved!");
         console.log(data);
