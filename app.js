@@ -23,22 +23,3 @@ function openModal(modalSelector) {
 function closeModal(modalSelector) {
     $('#' + modalSelector).css('display', 'none');
 }
-
-
-$.ajax({
-    url: "data.txt",
-    method: "POST",
-    data: JSON.stringify([
-        {
-            "id": 2
-        }
-    ]),
-    success: function (data){
-        console.log("Saved!");
-        console.log(data);
-    },
-    error: function (e){
-        console.log("Error!");
-        console.log(e);
-    }
-});

@@ -4,6 +4,9 @@
     <title>RCCC</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <!-- Vue.js - Version: 2.6.0 -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
@@ -30,7 +33,7 @@
 <div id="appContent">
     <div id="home" class="tabcontent">
 
-        <button class="custom-btn" onclick="openModal('gameSettings');">&#10010; New Game</button>
+        <!-- <button class="custom-btn" onclick="openModal('gameSettings');">&#10010; New Game</button>
 
         <div id="gameSettings" class="modal-container">
             <div class="modal">
@@ -59,7 +62,73 @@
                 </div>
                 <div class="modal-footer"></div>
             </div>
+        </div> -->
+
+        <h2 id="teamAScore"><span>Team A &nbsp;</span><span>{{ teamA.runs }}/{{ teamA.wickets }}</span></h2>
+        <h2 id="teamBScore"><span>Team B &nbsp;</span><span>{{ teamB.runs }}/{{ teamB.wickets }}</span></h2>
+
+        <div id="runBtnContainer" >
+            <button :id="run.id" class="run custom-btn" v-for="run in runTypes" v-on:click="addRuns(currentBattingTeam, run.value)">{{ run.label }}</button>
         </div>
+
+        <script>
+            var home = new Vue ({
+                el: '#home',
+                data: {
+                    "currentBattingTeam": "teamA",
+                    "teamA": {
+                        "runs": 223,
+                        "wickets": 5
+                    },
+                    "teamB": {
+                        "runs": 122,
+                        "wickets": 1
+                    },
+                    "runTypes": [
+                        {
+                            "id": "dot",
+                            "label": "0",
+                            "value": 0,
+                        },
+                        {
+                            "id": "run1",
+                            "label": "1",
+                            "value": 1,
+                        },
+                        {
+                            "id": "run2",
+                            "label": "2",
+                            "value": 2,
+                        },
+                        {
+                            "id": "run3",
+                            "label": "3",
+                            "value": 3,
+                        },
+                        {
+                            "id": "run4",
+                            "label": "4",
+                            "value": 4,
+                        },
+                        {
+                            "id": "run5",
+                            "label": "5",
+                            "value": 5,
+                        },
+                        {
+                            "id": "run6",
+                            "label": "6",
+                            "value": 6,
+                        }
+                    ]
+                },
+                methods: {
+                    addRuns: function (team, val) {
+                        this[team].runs = this[team].runs + val;
+                    }
+                }
+            });
+        </script>
     </div>
             
     <div id="liveMatches" class="tabcontent">
