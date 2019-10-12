@@ -485,6 +485,12 @@
         }
 
         $('.accordion:first').click();
+
+        //confirm before refreshing the page
+        window.onbeforeunload = function(event)
+        {
+            return confirm("Confirm refresh");
+        };
     </script>
 </body>
 </html>
