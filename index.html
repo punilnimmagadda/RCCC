@@ -1,147 +1,490 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RCCC</title>
+    <title>Score Tracker</title>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Vue.js - Version: 2.6.0 -->
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
-
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css?family=Zilla+Slab&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-    <!-- CSS -->
-    <link rel="stylesheet" type="text/css" href="site.css">
+        #scoreboard {
+            margin: 0 0 50px 0;
+            width: 100%;
+        }
 
-    <!-- JavaScript -->
-    <script src="app.js"></script>
+        .row {
+            margin: 10px;
+        }
+
+        #score {
+            margin: 0;
+            padding: 5px;
+            line-height: 200%;
+            font-weight: 400;
+            background-color: #1d2124;
+            color: #ffffff;
+            z-index: 1;
+        }
+
+        .label-light {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        .label-strong {
+            display: inline-block;
+            font-weight: 500;
+            margin-right: 5px;
+        }
+
+        .btn-round {
+            height: 36px;
+            width: 36px;
+            padding: 0;
+            border-radius: 36px;
+            outline: none;
+            background-color: maroon;
+            color: white;
+            border-width: 2px;
+            text-align: center;
+        }
+
+        .btn-round:active {
+            opacity: 0.7;
+        }
+
+        .btn-basic {
+            height: 30px;
+            border-radius: 4px;
+            outline: none;
+            background-color: #1d2124;
+            color: #ffffff;
+            border: 1px solid #1d2124;
+        }
+
+        .btn-basic:active {
+            background-color: #000000;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+        }
+
+        .input-small {
+            height: 25px;
+            width: 50px;
+            border-radius: 4px;
+            padding: 0 5px;
+            margin: 0 5px;
+            outline: none;
+        }
+
+        /* #actions button {
+            float: right;
+            margin: -5px 5px 5px 0;
+        } */
+
+        /* Accordion */
+        .accordion {
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            text-align: left;
+            outline: none;
+            font-size: 15px;
+            transition: 0.4s;
+        }
+
+        .active, .accordion:hover {
+            background-color: #ccc;
+            border: 1px solid #ccc;
+        }
+
+        .accordion:after {
+            content: '\002B';
+            color: #777;
+            font-weight: bold;
+            float: right;
+            margin-left: 5px;
+        }
+
+        .active:after {
+            content: "\2212";
+        }
+
+        .panel {
+            padding: 0 5px;
+            background-color: white;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+        }
+        /* Accordion - END */
+
+        .over-summary {
+            height: 20px;
+            line-height: 20px;
+            background-color: #1d2124;
+            border: 1px solid #1d2124;
+            color: #ffffff;
+            padding: 10px;
+        }
+
+        .ball-container {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .ball {
+            display: inline-block;
+            height: 36px;
+            line-height: 36px;
+            width: 36px;
+            margin: 0 0 5px 5px;
+            padding: 0;
+            border-radius: 36px;
+            background-color: maroon;
+            color: white;
+            text-align: center; 
+        }
+
+        #navbar {
+            width: 100%;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+        }
+
+        .nav-item {
+            float: left;
+            width: 50%;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: #1d2124;
+            border: 1px solid #555;
+            box-sizing: border-box;
+        }
+
+        .nav-item a {
+            color: #ffffff;
+            text-decoration: none;
+            width: 100%;
+        }
+    </style>
 </head>
 <body>
-<div id="appHeader">
-    <div id="appLogo">Reedy Creek Cricket Club</div>
-    <div id="appNav">
-        <button class="nav-item" onclick="openTab(event, 'home');">Home</button>
-        <button class="nav-item" onclick="openTab(event, 'liveMatches');">Live Matches</button>
-        <button class="nav-item" onclick="openTab(event, 'players');">Players</button>
-        <button class="nav-item" onclick="openTab(event, 'stats');">Stats</button>
-        <button class="nav-item" onclick="openTab(event, 'about');">About</button>
-    </div>
-</div>
-<div id="appContent">
-    <div id="home" class="tabcontent">
+    <div id="scoreboard">
+        <h1 id="score" class="row" style="text-align: center;">Score: <span id="runsScored">0</span>/<span id="wicketsFallen">0</span> (<span id="oversBowled">0.0</span>)</h1>
 
-        <!-- <button class="custom-btn" onclick="openModal('gameSettings');">&#10010; New Game</button>
-
-        <div id="gameSettings" class="modal-container">
-            <div class="modal">
-                <div class="modal-header">
-                    <div class="modal-title">Game Settings</div>
-                    <button class="modal-close-btn" onclick="closeModal('gameSettings');">&#10006;</button>
-                </div>
-                <div class="modal-body">
-                    <div id="overLimit">
-                        <label class="form-label">Over Limit</label><span class="required-field"> &#10033;</span><br>
-                        <input class="form-input" type="number" value="20"> overs per innings
-                    </div>
-                    <br>
-                    <div id="teams">
-                        <div id="teamA">
-                            <label class="form-label">First Team Name</label><span class="required-field"> &#10033;</span><br>
-                            <input class="form-input" type="text" value="Team A" placeholder="Enter Team Name"><br>
-                            <label class="form-label">Select Players</label><span class="required-field"> &#10033;</span><br>
-                        </div>
-                        <div id="teamB">
-                            <label class="form-label">Second Team Name</label><span class="required-field"> &#10033;</span><br>
-                            <input class="form-input" type="text" value="Team B" placeholder="Enter Team Name"><br>
-                            <label class="form-label">Select Players</label><span class="required-field"> &#10033;</span><br>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer"></div>
+        <div id="scoringActions">
+            <div id="actions" class="row">
+                <label class="label-strong">Action: </label>
+                <button id="undoLastBall" class="btn-basic" disabled>Undo</button>
+                <button id="endOver" class="btn-basic" disabled>End Over</button>
             </div>
-        </div> -->
-
-        <h2 id="teamAScore"><span>Team A &nbsp;</span><span>{{ teamA.runs }}/{{ teamA.wickets }}</span></h2>
-        <h2 id="teamBScore"><span>Team B &nbsp;</span><span>{{ teamB.runs }}/{{ teamB.wickets }}</span></h2>
-
-        <div id="runBtnContainer" >
-            <button :id="run.id" class="run custom-btn" v-for="run in runTypes" v-on:click="addRuns(currentBattingTeam, run.value)">{{ run.label }}</button>
+            <!-- <div id="actionContainer" class="row">
+                <button id="undoLastBall" class="btn-basic">Undo</button>
+                <button id="endOver" class="btn-basic" onclick="alert();" disabled>End Over</button>
+            </div> -->
+            <button id="runsAccordion" class="accordion" onclick="expandAccordion('runsAccordion')">Runs</button>
+            <div class="panel">
+                <div class="row">
+                    <button id="dot" class="scoring-btn btn-round"  data-class="R" value="0">0</button>
+                    <button id="run1" class="scoring-btn btn-round" data-class="R" value="1">1</button>
+                    <button id="run2" class="scoring-btn btn-round" data-class="R" value="2">2</button>
+                    <button id="run3" class="scoring-btn btn-round" data-class="R" value="3">3</button>
+                    <button id="run4" class="scoring-btn btn-round" data-class="R" value="4">4</button>
+                    <button id="run5" class="scoring-btn btn-round" data-class="R" value="5">5</button>
+                    <button id="run6" class="scoring-btn btn-round" data-class="R" value="6">6</button>
+                </div>
+            </div>
+            <button id="wideAccordion" class="accordion" onclick="expandAccordion('wideAccordion')">Wide</button>
+            <div class="panel">
+                <div class="row">
+                    <button id="wide" class="scoring-btn btn-round" data-class="WD" value="0">WD</button>
+                    <button id="wide1" class="scoring-btn btn-round" data-class="WD" value="1">WD1</button>
+                    <button id="wide2" class="scoring-btn btn-round" data-class="WD" value="2">WD2</button>
+                    <button id="wide3" class="scoring-btn btn-round" data-class="WD" value="3">WD3</button>
+                    <button id="wide4" class="scoring-btn btn-round" data-class="WD" value="4">WD4</button>
+                    <button id="wide5" class="scoring-btn btn-round" data-class="WD" value="5">WD5</button>
+                    <button id="wide6" class="scoring-btn btn-round" data-class="WD" value="6">WD6</button>
+                </div>
+            </div>
+            <button id="noBallAccordion" class="accordion" onclick="expandAccordion('noBallAccordion')">No Ball</button>
+            <div class="panel">
+                <div class="row">
+                    <button id="noBall" class="scoring-btn btn-round" data-class="NB" value="0">NB</button>
+                    <button id="noBall1" class="scoring-btn btn-round" data-class="NB" value="1">NB1</button>
+                    <button id="noBall2" class="scoring-btn btn-round" data-class="NB" value="2">NB2</button>
+                    <button id="noBall3" class="scoring-btn btn-round" data-class="NB" value="3">NB3</button>
+                    <button id="noBall4" class="scoring-btn btn-round" data-class="NB" value="4">NB4</button>
+                    <button id="noBall5" class="scoring-btn btn-round" data-class="NB" value="5">NB5</button>
+                    <button id="noBall6" class="scoring-btn btn-round" data-class="NB" value="6">NB6</button>
+                </div>
+            </div>
+            <button id="legByeAccordion" class="accordion" onclick="expandAccordion('legByeAccordion')">Leg Byes</button>
+            <div class="panel">
+                <div class="row">
+                    <button id="legBye1" class="scoring-btn btn-round" data-class="LB" value="1">LB1</button>
+                    <button id="legBye2" class="scoring-btn btn-round" data-class="LB" value="2">LB2</button>
+                    <button id="legBye3" class="scoring-btn btn-round" data-class="LB" value="3">LB3</button>
+                    <button id="legBye4" class="scoring-btn btn-round" data-class="LB" value="4">LB4</button>
+                    <button id="legBye5" class="scoring-btn btn-round" data-class="LB" value="5">LB5</button>
+                    <button id="legBye6" class="scoring-btn btn-round" data-class="LB" value="6">LB6</button>
+                </div>
+            </div>
+            <button id="byeAccordion" class="accordion" onclick="expandAccordion('byeAccordion')">Byes</button>
+            <div class="panel">
+                <div class="row">
+                    <button id="bye1" class="scoring-btn btn-round" data-class="B" value="1">B1</button>
+                    <button id="bye2" class="scoring-btn btn-round" data-class="B" value="2">B2</button>
+                    <button id="bye3" class="scoring-btn btn-round" data-class="B" value="3">B3</button>
+                    <button id="bye4" class="scoring-btn btn-round" data-class="B" value="4">B4</button>
+                    <button id="bye5" class="scoring-btn btn-round" data-class="B" value="5">B5</button>
+                    <button id="bye6" class="scoring-btn btn-round" data-class="B" value="6">B6</button>
+                </div>
+            </div>
+            <button id="wicketAccordion" class="accordion" onclick="expandAccordion('wicketAccordion')">Wicket</button>
+            <div class="panel">
+                <div class="row">
+                    <button id="wicket" class="scoring-btn btn-round" data-class="W" value="0">W</button>
+                    <button id="wicket1" class="scoring-btn btn-round" data-class="W" value="1">W1</button>
+                    <button id="wicket2" class="scoring-btn btn-round" data-class="W" value="2">W2</button>
+                    <button id="wicket3" class="scoring-btn btn-round" data-class="W" value="3">W3</button>
+                    <button id="wicket4" class="scoring-btn btn-round" data-class="W" value="4">W4</button>
+                    <button id="wicket5" class="scoring-btn btn-round" data-class="W" value="5">W5</button>
+                    <button id="wicket6" class="scoring-btn btn-round" data-class="W" value="6">W6</button>
+                </div>
+            </div>
         </div>
+        <br>
+        <div id="scoreTracker"></div>
+        <div id="navbar">
+            <div class="nav-item"><a href="#scoreboard">Scoring</a></div>
+            <div class="nav-item"><a href="#scoreTracker">Ball Tracker</a></div>
+        </div>
+    </div>
 
-        <script>
-            var home = new Vue ({
-                el: '#home',
-                data: {
-                    "currentBattingTeam": "teamA",
-                    "teamA": {
-                        "runs": 223,
-                        "wickets": 5
-                    },
-                    "teamB": {
-                        "runs": 122,
-                        "wickets": 1
-                    },
-                    "runTypes": [
-                        {
-                            "id": "dot",
-                            "label": "0",
-                            "value": 0,
-                        },
-                        {
-                            "id": "run1",
-                            "label": "1",
-                            "value": 1,
-                        },
-                        {
-                            "id": "run2",
-                            "label": "2",
-                            "value": 2,
-                        },
-                        {
-                            "id": "run3",
-                            "label": "3",
-                            "value": 3,
-                        },
-                        {
-                            "id": "run4",
-                            "label": "4",
-                            "value": 4,
-                        },
-                        {
-                            "id": "run5",
-                            "label": "5",
-                            "value": 5,
-                        },
-                        {
-                            "id": "run6",
-                            "label": "6",
-                            "value": 6,
-                        }
-                    ]
-                },
-                methods: {
-                    addRuns: function (team, val) {
-                        this[team].runs = this[team].runs + val;
+    <script>
+        var overs = [];
+        var currentOver = [];
+        class Ball {
+            constructor(ballId, ballNumber, ballClass, isLegal, isWicket, legalRuns, penalityRuns, totalRuns) {
+                this.ballId = ballId;
+                this.ballNumber = ballNumber;
+                this.ballClass = ballClass;
+                this.isLegal = isLegal;
+                this.isWicket = isWicket;
+                this.legalRuns = legalRuns;
+                this.penalityRuns = penalityRuns;
+                this.totalRuns = totalRuns;
+            }
+        }
+
+        $('.scoring-btn').on('click', function(evt) {
+            let ball = new Ball();
+            ball.ballClass = $(this).data("class");
+            ball.legalRuns = parseInt($(this).val());
+            ball.ballId = currentOver.length + 1;
+
+            switch(ball.ballClass) {
+                case "R":
+                    ball.isLegal = true;
+                    ball.isWicket = false;
+                    ball.penalityRuns = 0;
+                    break;
+                case "WD":
+                    ball.isLegal = false;
+                    ball.isWicket = false;
+                    ball.penalityRuns = 1;
+                    break;
+                case "NB":
+                    ball.isLegal = false;
+                    ball.isWicket = false;
+                    ball.penalityRuns = 1;
+                    break;
+                case "LB":
+                    ball.isLegal = true;
+                    ball.isWicket = false;
+                    ball.penalityRuns = 0;
+                    break;
+                case "B":
+                    ball.isLegal = true;
+                    ball.isWicket = false;
+                    ball.penalityRuns = 0;
+                    break;
+                case "W":
+                    ball.isLegal = true;
+                    ball.isWicket = true;
+                    ball.penalityRuns = 0;
+                    break;
+                default: 
+                    console.error("Error!!");
+            }
+
+            ball.ballNumber = getBallNumber(ball.isLegal);
+            ball.totalRuns = ball.legalRuns + ball.penalityRuns;
+
+            if(ball.ballId >= 1) {
+                $('#undoLastBall').prop('disabled', false);
+            } else {
+                $('#undoLastBall').prop('disabled', true);
+            }
+            if(ball.ballNumber >= 6) {
+                $('#endOver').prop('disabled', false);
+            }
+            if(overs.length == 0){
+                overs.push([]);
+            }
+            currentOver = overs[overs.length - 1];
+            currentOver.push(ball);
+            overs[overs.length - 1] = currentOver;
+            updateScoreBoard();
+
+            function getBallNumber(isBallLegal) {
+                if(isBallLegal) {
+                    if(currentOver.length > 0) {
+                        return currentOver[currentOver.length - 1].ballNumber + 1;
+                    } else {
+                        return 1;
+                    }
+                } else {
+                    if(currentOver.length > 0) {
+                        return currentOver[currentOver.length - 1].ballNumber + 0;
+                    } else {
+                        return 0;
                     }
                 }
-            });
-        </script>
-    </div>
-            
-    <div id="liveMatches" class="tabcontent">
-        <h3>Live Matches</h3>
-    </div>
+            }
+        });
 
-    <div id="players" class="tabcontent">
-        <h3>Players</h3>
-    </div>
+        $('#endOver').on('click', function(evt) {
+            currentOver = [];
+            overs.push([]);
+            $('#endOver').prop('disabled', true);
+            updateScoreBoard();
+        });
+
+        $('#undoLastBall').on('click', function(evt) {
+            if(overs.length > 0) {
+                overs[overs.length - 1].pop();
+                currentOver = overs[overs.length - 1];
+                if(overs[overs.length - 1].length == 0) {
+                    overs.pop();
+                    currentOver = (overs.length > 0) ? overs[overs.length - 1] : [];
+                    if(overs.length == 0) {
+                        $('#undoLastBall').prop('disabled', true);
+                        $('#endOver').prop('disabled', false);
+                    }
+                    $('#endOver').prop('disabled', false);
+                } else {
+                    let over = overs[overs.length - 1];
+                    if(over[over.length - 1].ballNumber >= 6) {
+                        $('#endOver').prop('disabled', false);
+                    } else {
+                        $('#endOver').prop('disabled', true);
+                    }
+                }
+            }
+            updateScoreBoard();
+        });
+
+        function updateScoreBoard() {
+            //update score, wickets, overs, currentball
+            let runsByOver = [];
+            let wicketsByOver = [];
+            const reducer = (accumulator, currentValue) => accumulator + currentValue;
+            const runReducerByOver = (accumulator, currentValue) => accumulator + currentValue.totalRuns;
+            const wicketReducerByOver = (accumulator, currentValue) => accumulator + ((currentValue.isWicket) ? 1 : 0);
+            for(let i=0; i<overs.length; i++){
+                runsByOver.push(overs[i].reduce(runReducerByOver, 0));
+                wicketsByOver.push(overs[i].reduce(wicketReducerByOver, 0));
+            }
+            //set Runs Scored
+            $('#runsScored').text(runsByOver.reduce(reducer, 0));
+            $('#wicketsFallen').text(wicketsByOver.reduce(reducer, 0));
+            let over = overs[overs.length - 1];
+            $('#oversBowled').text("" + ((overs.length >= 1) ? overs.length - 1 : 0) + "." + ((overs.length >= 1 && over.length >= 1) ? (over[over.length - 1].ballNumber) : 0));
+            $('#currentBall').text("" + ((overs.length >= 1) ? overs.length - 1 : 0) + "." + ((overs.length >= 1 && over.length >= 1) ? (over[over.length - 1].ballNumber + 1) : 0))
+            if(overs.length == 0) {
+                $('#undoLastBall').prop('disabled', true);
+                $('#endOver').prop('disabled', true);
+            }
+
+            //ScoreTracker
+            var scoreTracker = document.getElementById('scoreTracker');
+            scoreTracker.innerHTML = "";
+            let temp = ""
+            for(let i = overs.length - 1; i >= 0; i--){
+                let over = overs[i];
+                temp += '<div class="over-container">';
+                if(over.length > 0) {
+                    temp += '<div class="over-summary">';
+                    temp += '<span class="over-number" style="float:left;">Over ' + (i + 1) + '</span>';
+                    temp += '<span class="over-runs" style="float:right;">Runs ' + runsByOver[i] + '</span>';
+                    temp += '</div>';
+                    temp += '<div class="ball-container">';
+                    //for(let j = over.length - 1; j >= 0; j--){
+                    for(let j = 0; j < over.length; j++){
+                        let ball = over[j];
+                        temp += '<span class="ball">' + ((ball.ballClass === "R") ? "" : ball.ballClass) + ((ball.legalRuns > 0) ? ball.legalRuns : ((ball.ballClass === "R") ? 0 : "" )) + '</span>';
+                    }
+                    temp += '</div>';
+                }
+                temp += '</div>';
+            }
+            scoreTracker.innerHTML += temp;
             
-    <div id="stats" class="tabcontent">
-        <h3>Stats</h3>
-    </div>
-</div>
+            collapseAllAccordion();
+            $('.accordion:first').click();
+        }
+
+        // Open/Collapse Accordion
+        // var acc = document.getElementsByClassName("accordion");
+
+        // for (let i = 0; i < acc.length; i++) {
+        //     acc[i].addEventListener("click", function() {
+        //         this.classList.toggle("active");
+        //         var panel = this.nextElementSibling;
+        //         if (panel.style.maxHeight) {
+        //             panel.style.maxHeight = null;
+        //         } else {
+        //             panel.style.maxHeight = panel.scrollHeight + "px";
+        //         } 
+        //     });
+        // }
+
+        function expandAccordion(id) {
+            collapseAllAccordion();
+            let acc = document.getElementById(id);
+
+            acc.classList.add("active");
+            var panel = acc.nextElementSibling;
+            panel.style.maxHeight = panel.scrollHeight + "px";
+
+        }
+
+        function collapseAllAccordion() {
+            let acc = document.getElementsByClassName("accordion");
+
+            for (let i = 0; i < acc.length; i++) {
+                acc[i].classList.remove("active");
+                var panel = acc[i].nextElementSibling;
+                panel.style.maxHeight = null;
+            }
+        }
+
+        $('.accordion:first').click();
+    </script>
 </body>
 </html>
